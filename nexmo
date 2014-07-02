@@ -1,0 +1,18 @@
+#!/bin/bash
+if test -f ~/.nexmo; then
+ source ~/.nexmo
+else
+ echo "No .nexmo Config found inside $HOME";
+ exit 1;
+fi
+if command -v curl >/dev/null 2>&1; then
+ DATA="api_key=$NEXMO_API_KEY&api_secret=$NEXMO_API_SECRET&from=$1&to=$2&text=$3";
+ RESPONSE=$(curl -s --data "$DATA" "https://rest.nexmo.com/sms/json" | grep "error-text")
+ if [[ -n $RESPONSE ]]; then
+  echo "Failed sending SMS, please check your Api-Key, Api-Secret, Sender, Recipient and Text!";
+ else
+  echo "SMS sent successfully!";
+ fi
+else
+ echo "NexmoCli requires a cURL installation. Please refer to http://curl.haxx.se";
+fi
